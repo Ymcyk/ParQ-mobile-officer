@@ -8,4 +8,7 @@
     <!-- SharedPreferences -->
     <string name="sharedpref_file_key">org.parq.parqofficer.sharedpref</string>
     <string name="sharedpref_url_slug">url</string>
+    <!-- fragment_type_url -->
+    <string name="type_url">Type URL</string>
+    <string name="ok">OK</string>
 </resources>
