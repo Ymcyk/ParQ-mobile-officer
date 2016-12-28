@@ -1,16 +1,21 @@
 <resources>
     <string name="app_name">ParQ Officer</string>
+    <!-- LoginActivity -->
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="url">URL</string>
+    <!-- LoginActivityAPU -->
     <string name="bad_login_or_pass">Bad login or password</string>
+    <string name="connection_error">Connection error</string>
     <!-- SharedPreferences -->
     <string name="sharedpref_file_key">org.parq.parqofficer.sharedpref</string>
     <string name="sharedpref_url_slug">url</string>
     <!-- fragment_type_url -->
     <string name="type_url">Type URL</string>
     <string name="ok">OK</string>
+    <!-- ActivityScan -->
+    <string name="start_scan">Start scanning</string>
     <!-- ParQ API URL -->
     <string name="url_login">api-token-auth/</string>
     <string name="url_current">current/</string>
