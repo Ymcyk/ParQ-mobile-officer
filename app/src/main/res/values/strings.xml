@@ -11,4 +11,7 @@
     <!-- fragment_type_url -->
     <string name="type_url">Type URL</string>
     <string name="ok">OK</string>
+    <!-- ParQ API URL -->
+    <string name="url_login">api-token-auth/</string>
+    <string name="url_current">current/</string>
 </resources>
