@@ -61,7 +61,7 @@ public class LoginActivityAPI {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error != null && error.networkResponse.statusCode == 400){
+                        if(error.networkResponse != null && error.networkResponse.statusCode == 400){
                             System.out.println("Bad username or password");
                             Toast toast = Toast.makeText(
                                     loginActivity,
@@ -69,7 +69,12 @@ public class LoginActivityAPI {
                                     Toast.LENGTH_LONG);
                             toast.show();
                         } else {
-                            System.out.println("Bad Request");
+                            System.out.println("Connection error");
+                            Toast toast = Toast.makeText(
+                                    loginActivity,
+                                    loginActivity.getString(R.string.connection_error),
+                                    Toast.LENGTH_LONG);
+                            toast.show();
                             error.printStackTrace();
                         }
                     }
