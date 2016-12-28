@@ -1,6 +1,7 @@
 package com.parq.parqofficer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -68,9 +69,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginOnClick(View view) {
-        api.login(
-                usernameLabel.getText().toString(),
-                passwordLabel.getText().toString());
+        Intent intent = new Intent(this, ScanActivity.class);
+        startActivity(intent);
+        // api.login(
+        //         usernameLabel.getText().toString(),
+        //         passwordLabel.getText().toString());
     }
 
     public void loginSucceeded() {
