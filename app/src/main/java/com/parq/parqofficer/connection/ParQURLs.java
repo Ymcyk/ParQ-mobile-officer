@@ -1,31 +1,37 @@
 package com.parq.parqofficer.connection;
 
+import android.content.Context;
 import android.net.Uri.Builder;
+import com.parq.parqofficer.R;
 
 /**
  * Created by piotr on 27.12.16.
  */
 
 public class ParQURLs {
-    private static String authority;
+    private String authority;
+    private Context context;
 
-    public static String getAuthority() {
-        return authority;
+    public ParQURLs(String authority, Context context) {
+        this.authority = authority;
+        this.context = context;
     }
 
-    public static void setAuthority(String authority) {
-        ParQURLs.authority = authority;
-    }
-
-    private static Builder getBase() {
+    private Builder getBase() {
         return new Builder()
                 .scheme("http")
-                .encodedAuthority(ParQURLs.authority);
+                .encodedAuthority(authority);
     }
 
-    public static String getLoginURL() {
-        Builder builder = ParQURLs.getBase()
-                .appendEncodedPath("api-token-auth/");
+    public String getLoginURL() {
+        Builder builder = getBase()
+                .appendEncodedPath(context.getString(R.string.url_login));
+        return builder.build().toString();
+    }
+
+    public String getCurrentURL() {
+        Builder builder = getBase()
+                .appendEncodedPath(context.getString(R.string.url_current));
         return builder.build().toString();
     }
 }

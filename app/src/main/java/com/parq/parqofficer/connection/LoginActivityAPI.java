@@ -10,8 +10,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.parq.parqofficer.LoginActivity;
 import com.parq.parqofficer.R;
-import com.parq.parqofficer.exceptions.NoApiURLException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,33 +21,38 @@ import org.json.JSONObject;
  */
 
 public class LoginActivityAPI {
-    private Context context;
+    private LoginActivity loginActivity;
     private SharedPreferences sharedPref;
     private ParQURLs url;
     private String token;
 
-    public LoginActivityAPI(Context context){
-        this.context = context;
-        this.sharedPref = context.getSharedPreferences(
-                this.context.getString(R.string.sharedpref_file_key),
+    public LoginActivityAPI(LoginActivity loginActivity){
+        this.loginActivity = loginActivity;
+        this.sharedPref = loginActivity.getSharedPreferences(
+                this.loginActivity.getString(R.string.sharedpref_file_key),
                 Context.MODE_PRIVATE);
-        this.url = new ParQURLs(getURLFromSharedPref(), this.context);
+        this.url = new ParQURLs(getURLFromSharedPref(), this.loginActivity);
+    }
+
+    public String getToken() {
+        return this.token;
+    }
+
+    public boolean tryLoginWithToken() {
+        return false;
     }
 
     public void login(final String username, final String password) {
-        // final String url = "http://192.168.1.20:8000/api-token-auth/";
-        System.out.println("MÓJ URLLLLLLLLLLLL: " + url);
-
         StringRequest loginRequest = new StringRequest(Request.Method.POST, url.getLoginURL(),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        System.out.println("WSZEDŁĘ∞!!!!!!!!!!!");
                         try {
                             //JSONObject jsonResponse = new JSONObject(response).getJSONObject("form");
                             JSONObject jsonResponse = new JSONObject(response);
-                            String token = jsonResponse.getString("token");
+                            token = jsonResponse.getString("token");
                             System.out.println(String.format("Token: %s", token));
+                            loginActivity.loginSucceeded();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -56,15 +61,17 @@ public class LoginActivityAPI {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        System.out.println("Error ListeneRRRRRRRRRRRRRRRRRR " + error.networkResponse.statusCode);
-                        if(error.networkResponse.statusCode == 400){
+                        if(error != null && error.networkResponse.statusCode == 400){
+                            System.out.println("Bad username or password");
                             Toast toast = Toast.makeText(
-                                    context,
-                                    context.getString(R.string.bad_login_or_pass),
+                                    loginActivity,
+                                    loginActivity.getString(R.string.bad_login_or_pass),
                                     Toast.LENGTH_LONG);
                             toast.show();
+                        } else {
+                            System.out.println("Bad Request");
+                            error.printStackTrace();
                         }
-                        error.printStackTrace();
                     }
                 }
         ) {
@@ -75,11 +82,11 @@ public class LoginActivityAPI {
             }
         };
 
-        Volley.newRequestQueue(context).add(loginRequest);
+        Volley.newRequestQueue(loginActivity).add(loginRequest);
     }
 
     private String getURLFromSharedPref() {
-        return sharedPref.getString(context.getString(R.string.sharedpref_url_slug), null);
+        return sharedPref.getString(loginActivity.getString(R.string.sharedpref_url_slug), null);
     }
 }
 
