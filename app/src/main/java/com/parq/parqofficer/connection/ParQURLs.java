@@ -1,4 +1,4 @@
-package com.parq.parqofficer;
+package com.parq.parqofficer.connection;
 
 import android.net.Uri.Builder;
 
