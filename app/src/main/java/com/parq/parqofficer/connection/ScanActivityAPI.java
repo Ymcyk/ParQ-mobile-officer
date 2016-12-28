@@ -1,22 +1,15 @@
 package com.parq.parqofficer.connection;
 
-import android.widget.Toast;
-
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.parq.parqofficer.R;
 import com.parq.parqofficer.ScanActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by piotr on 28.12.16.
@@ -39,18 +32,28 @@ public class ScanActivityAPI {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject vehicleResponse = new JSONObject(response).getJSONObject("vehicle");
-                            JSONObject parkingResponse = new JSONObject(response).getJSONObject("parking");
+                            JSONArray arrayResponse = new JSONArray(response);
+                            if(arrayResponse.length() == 0){
+                                scanActivity.onInvalidTicket();
+                                return;
+                            }
+
+                            JSONObject vehicleResponse = arrayResponse
+                                    .getJSONObject(0)
+                                    .getJSONObject("vehicle");
+                            JSONObject parkingResponse = arrayResponse
+                                    .getJSONObject(0)
+                                    .getJSONObject("parking");
 
                             String plateCountry = vehicleResponse.getString("plate_country");
                             String plateNumber = vehicleResponse.getString("plate_number");
                             String parkingName = parkingResponse.getString("name");
 
                             Ticket ticket = new Ticket(plateCountry, plateNumber, parkingName);
-
                             scanActivity.onValidTicket(ticket);
+
                         } catch (JSONException e) {
-                            scanActivity.onInvalidTicket();
+                            scanActivity.onParseError();
                             e.printStackTrace();
                         }
                     }
@@ -58,8 +61,12 @@ public class ScanActivityAPI {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                            scanActivity.onConnectionError();
-                            error.printStackTrace();
+                        if(error.networkResponse != null && error.networkResponse.statusCode == 406){
+                            scanActivity.onInvalidTicket();
+                            return;
+                        }
+                        scanActivity.onConnectionError();
+                        error.printStackTrace();
                     }
                 }
         ) {
