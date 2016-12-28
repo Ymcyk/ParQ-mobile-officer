@@ -24,18 +24,24 @@ public class LoginActivityAPI {
     private LoginActivity loginActivity;
     private SharedPreferences sharedPref;
     private ParQURLs url;
-    private String token;
+    private static String token;
+    private static String authority;
 
     public LoginActivityAPI(LoginActivity loginActivity){
         this.loginActivity = loginActivity;
         this.sharedPref = loginActivity.getSharedPreferences(
                 this.loginActivity.getString(R.string.sharedpref_file_key),
                 Context.MODE_PRIVATE);
+        this.authority = getURLFromSharedPref();
         this.url = new ParQURLs(getURLFromSharedPref(), this.loginActivity);
     }
 
     public String getToken() {
-        return this.token;
+        return LoginActivityAPI.token;
+    }
+
+    public static String getAuthority() {
+        return LoginActivityAPI.authority;
     }
 
     public boolean tryLoginWithToken() {

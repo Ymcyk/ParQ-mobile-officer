@@ -29,6 +29,19 @@ public class ParQURLs {
         return builder.build().toString();
     }
 
+    public String getTicketListURL() {
+        Builder builder = getBase()
+                .appendEncodedPath(context.getString(R.string.url_tickets));
+        return builder.build().toString();
+    }
+
+    public String getTicketByBadgeURL(String badge) {
+        Builder builder = getBase()
+                .appendEncodedPath(context.getString(R.string.url_tickets))
+                .appendQueryParameter("badge", badge);
+        return builder.build().toString();
+    }
+
     public String getCurrentURL() {
         Builder builder = getBase()
                 .appendEncodedPath(context.getString(R.string.url_current));

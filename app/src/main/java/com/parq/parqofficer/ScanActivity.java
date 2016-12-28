@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.parq.parqofficer.connection.ScanActivityAPI;
+import com.parq.parqofficer.connection.Ticket;
 
 public class ScanActivity extends AppCompatActivity {
 
@@ -18,10 +20,36 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     public void startScanOnClick(View view) {
+        ScanActivityAPI api = new ScanActivityAPI(this);
+        api.requestTicket("18a131b1-7ff0-412b-8d6a-65b30c8e3ede");
+        /*
         IntentIntegrator integrator = new IntentIntegrator(this)
                 .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
-                .setPrompt("Scan");
+                .setPrompt("Scan")
+                .setOrientationLocked(true);
         integrator.initiateScan();
+        */
+    }
+
+    public void onValidTicket(Ticket ticket){
+        Toast.makeText(
+                this,
+                String.format("%s %s %s", ticket.getPlateCountry(), ticket.getPlateNumber(), ticket.getParking()),
+                Toast.LENGTH_LONG).show();
+    }
+
+    public void onInvalidTicket() {
+        Toast.makeText(
+                this,
+                "Ticket is not valid",
+                Toast.LENGTH_LONG).show();
+    }
+
+    public void onConnectionError() {
+        Toast.makeText(
+                this,
+                "Connection error",
+                Toast.LENGTH_LONG).show();
     }
 
     @Override

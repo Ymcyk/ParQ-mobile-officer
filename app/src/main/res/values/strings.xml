@@ -19,4 +19,5 @@
     <!-- ParQ API URL -->
     <string name="url_login">api-token-auth/</string>
     <string name="url_current">current/</string>
+    <string name="url_tickets">tickets/</string>
 </resources>
