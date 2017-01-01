@@ -88,7 +88,7 @@ public class LoginActivityAPI {
         ) {
             @Override
             public byte[] getBody() throws AuthFailureError {
-                String data = String.format("username=%s&password=%s", username, password);
+                String data = String.format("username=%s&password=%s&role=officer", username, password);
                 return data.getBytes();
             }
         };
