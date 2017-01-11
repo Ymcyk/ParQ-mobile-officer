@@ -13,9 +13,9 @@ import com.parq.parqofficer.connection.ScanActivityAPI;
 import com.parq.parqofficer.connection.Ticket;
 
 public class ScanActivity extends AppCompatActivity {
-    TextView validityLabel;
-    TextView plateLabel;
-    TextView parkingLabel;
+    private TextView validityLabel;
+    private TextView plateLabel;
+    private TextView parkingLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +25,12 @@ public class ScanActivity extends AppCompatActivity {
         validityLabel = (TextView) findViewById(R.id.validity_label);
         plateLabel = (TextView) findViewById(R.id.plate_label);
         parkingLabel = (TextView) findViewById(R.id.parking_label);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        cleanLabels();
     }
 
     public void startScanOnClick(View view) {
@@ -43,18 +49,10 @@ public class ScanActivity extends AppCompatActivity {
 
     public void onInvalidTicket() {
         validityLabel.setText("Ticket is invalid");
-        plateLabel.setText("");
-        parkingLabel.setText("");
     }
 
-    public void onConnectionError() {
-        validityLabel.setText("Connection error");
-        plateLabel.setText("");
-        parkingLabel.setText("");
-    }
-
-    public void onParseError() {
-        validityLabel.setText("Parsing error");
+    private void cleanLabels() {
+        validityLabel.setText("");
         plateLabel.setText("");
         parkingLabel.setText("");
     }
@@ -73,5 +71,19 @@ public class ScanActivity extends AppCompatActivity {
     private void sendRequest(String badge) {
         ScanActivityAPI api = new ScanActivityAPI(this);
         api.requestTicket(badge);
+    }
+
+    public void connectionError(int errorCode) {
+        switch (errorCode){
+            case App.PARSE_ERROR:
+                validityLabel.setText("Parse error");
+                break;
+            case App.CONNECTION_ERROR:
+                validityLabel.setText("Connection error");
+                break;
+            case App.UNAUTHENTICATED:
+                validityLabel.setText("Unauthenticated");
+                break;
+        }
     }
 }

@@ -16,6 +16,8 @@
     <string name="ok">OK</string>
     <!-- ActivityScan -->
     <string name="start_scan">Start scanning</string>
+    <string name="plate_number">Plate number</string>
+    <string name="parking">Parking</string>
     <!-- ParQ API URL -->
     <string name="url_login">api-token-auth/</string>
     <string name="url_current">current/</string>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_scan"
     android:layout_width="match_parent"
@@ -8,27 +8,46 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:columnCount="2"
     tools:context="com.parq.parqofficer.ScanActivity">
 
-    <Button
-        android:id="@+id/start_scan_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/start_scan"
-        android:onClick="startScanOnClick"/>
     <TextView
         android:id="@+id/validity_label"
-        android:layout_below="@id/start_scan_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_columnSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="46dp"
+        android:layout_marginRight="46dp"
+        android:text="@string/plate_number"/>
     <TextView
         android:id="@+id/plate_label"
-        android:layout_below="@id/validity_label"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_gravity="fill_horizontal"/>
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="46dp"
+        android:layout_marginRight="46dp"
+        android:text="@string/parking"/>
     <TextView
         android:id="@+id/parking_label"
-        android:layout_below="@id/plate_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_gravity="fill_horizontal" />
+    <Button
+        android:id="@+id/start_scan_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/start_scan"
+        android:layout_columnSpan="2"
+        android:onClick="startScanOnClick"/>
+</GridLayout>

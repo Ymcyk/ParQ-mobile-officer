@@ -1,15 +1,21 @@
 package com.parq.parqofficer.connection;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.parq.parqofficer.App;
 import com.parq.parqofficer.ScanActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by piotr on 28.12.16.
@@ -17,17 +23,15 @@ import org.json.JSONObject;
 
 public class ScanActivityAPI {
     private ScanActivity scanActivity;
-    private ParQURLs url;
 
     public ScanActivityAPI(ScanActivity scanActivity) {
         this.scanActivity = scanActivity;
-        this.url = new ParQURLs(LoginActivityAPI.getAuthority(), scanActivity);
     }
 
     public void requestTicket(final String badge) {
         StringRequest ticketRequest = new StringRequest(
                 Request.Method.GET,
-                url.getTicketByBadgeURL(badge),
+                App.getUrl().getTicketByBadgeURL(badge),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -53,7 +57,7 @@ public class ScanActivityAPI {
                             scanActivity.onValidTicket(ticket);
 
                         } catch (JSONException e) {
-                            scanActivity.onParseError();
+                            scanActivity.connectionError(App.PARSE_ERROR);
                             e.printStackTrace();
                         }
                     }
@@ -65,15 +69,26 @@ public class ScanActivityAPI {
                             scanActivity.onInvalidTicket();
                             return;
                         }
-                        scanActivity.onConnectionError();
+                        scanActivity.connectionError(App.CONNECTION_ERROR);
                         error.printStackTrace();
                     }
                 }
         ) {
-            // empty
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", String.format("Token %s", App.getToken()));
+                return headers;
+            }
         };
 
+        ticketRequest.setRetryPolicy(
+                new DefaultRetryPolicy(
+                        DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
+                        1,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                )
+        );
         Volley.newRequestQueue(scanActivity).add(ticketRequest);
     }
-
 }

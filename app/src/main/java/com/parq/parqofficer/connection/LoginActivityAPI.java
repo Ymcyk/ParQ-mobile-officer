@@ -1,17 +1,16 @@
 package com.parq.parqofficer.connection;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.parq.parqofficer.App;
 import com.parq.parqofficer.LoginActivity;
-import com.parq.parqofficer.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,66 +21,42 @@ import org.json.JSONObject;
 
 public class LoginActivityAPI {
     private LoginActivity loginActivity;
-    private SharedPreferences sharedPref;
-    private ParQURLs url;
-    private static String token;
-    private static String authority;
 
     public LoginActivityAPI(LoginActivity loginActivity){
         this.loginActivity = loginActivity;
-        this.sharedPref = loginActivity.getSharedPreferences(
-                this.loginActivity.getString(R.string.sharedpref_file_key),
-                Context.MODE_PRIVATE);
-        this.authority = getURLFromSharedPref();
-        this.url = new ParQURLs(getURLFromSharedPref(), this.loginActivity);
-    }
-
-    public String getToken() {
-        return LoginActivityAPI.token;
-    }
-
-    public static String getAuthority() {
-        return LoginActivityAPI.authority;
-    }
-
-    public boolean tryLoginWithToken() {
-        return false;
     }
 
     public void login(final String username, final String password) {
-        StringRequest loginRequest = new StringRequest(Request.Method.POST, url.getLoginURL(),
+        StringRequest loginRequest = new StringRequest(Request.Method.POST, App.getUrl().getLoginURL(),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            //JSONObject jsonResponse = new JSONObject(response).getJSONObject("form");
                             JSONObject jsonResponse = new JSONObject(response);
-                            token = jsonResponse.getString("token");
+                            String token = jsonResponse.getString("token");
                             System.out.println(String.format("Token: %s", token));
-                            loginActivity.loginSucceeded();
+                            loginActivity.loginSuccess(token);
                         } catch (JSONException e) {
+                            Log.d("Login", "JSON parse error");
                             e.printStackTrace();
+                            loginActivity.connectionError(App.PARSE_ERROR);
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error.networkResponse != null && error.networkResponse.statusCode == 400){
-                            System.out.println("Bad username or password");
-                            Toast toast = Toast.makeText(
-                                    loginActivity,
-                                    loginActivity.getString(R.string.bad_login_or_pass),
-                                    Toast.LENGTH_LONG);
-                            toast.show();
+                        NetworkResponse er = error.networkResponse;
+                        if(er != null && er.statusCode == 400) {
+                            loginActivity.loginFailure();
+                            Log.i("Login", "Bad login or password");
+                        } else if(er != null && er.statusCode == 403) {
+                            loginActivity.connectionError(App.UNAUTHENTICATED);
+                            Log.d("Login", "Bad role");
                         } else {
-                            System.out.println("Connection error");
-                            Toast toast = Toast.makeText(
-                                    loginActivity,
-                                    loginActivity.getString(R.string.connection_error),
-                                    Toast.LENGTH_LONG);
-                            toast.show();
                             error.printStackTrace();
+                            Log.d("Login", "Connection error");
+                            loginActivity.connectionError(App.CONNECTION_ERROR);
                         }
                     }
                 }
@@ -94,10 +69,6 @@ public class LoginActivityAPI {
         };
 
         Volley.newRequestQueue(loginActivity).add(loginRequest);
-    }
-
-    private String getURLFromSharedPref() {
-        return sharedPref.getString(loginActivity.getString(R.string.sharedpref_url_slug), null);
     }
 }
 

@@ -11,14 +11,38 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.parq.parqofficer.connection.LoginActivityAPI;
+import com.parq.parqofficer.connection.ParQURLConstructor;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText usernameLabel;
     private EditText passwordLabel;
     private Button loginButton;
     private LoginActivityAPI api;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        setViews();
+        setApp();
+
+        showTypeUrlDialog();
+
+        api = new LoginActivityAPI(this);
+    }
+
+    private void setViews() {
+        usernameLabel = (EditText) findViewById(R.id.username_label);
+        passwordLabel = (EditText) findViewById(R.id.password_label);
+        loginButton = (Button) findViewById(R.id.login_button);
+
+        usernameLabel.addTextChangedListener(loginTextWatcher);
+        passwordLabel.addTextChangedListener(loginTextWatcher);
+    }
 
     private TextWatcher loginTextWatcher = new TextWatcher() {
         @Override
@@ -45,21 +69,14 @@ public class LoginActivity extends AppCompatActivity {
             loginButton.setEnabled(true);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        usernameLabel = (EditText) findViewById(R.id.username_label);
-        passwordLabel = (EditText) findViewById(R.id.password_label);
-        loginButton = (Button) findViewById(R.id.login_button);
-
-        usernameLabel.addTextChangedListener(loginTextWatcher);
-        passwordLabel.addTextChangedListener(loginTextWatcher);
-
-        showTypeUrlDialog();
-
-        api = new LoginActivityAPI(this);
+    private void setApp(){
+        SharedPreferences sharedPref = this.getSharedPreferences(
+                this.getString(R.string.sharedpref_file_key),
+                Context.MODE_PRIVATE);
+        String authority = sharedPref.getString(this.getString(R.string.sharedpref_url_slug), null);
+        ParQURLConstructor url = new ParQURLConstructor(authority, getApplicationContext());
+        App.setSharedPref(sharedPref);
+        App.setUrl(url);
     }
 
     private void showTypeUrlDialog() {
@@ -69,15 +86,34 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginOnClick(View view) {
-        Intent intent = new Intent(this, ScanActivity.class);
-        startActivity(intent);
-        // api.login(
-        //         usernameLabel.getText().toString(),
-        //         passwordLabel.getText().toString());
+        api.login(
+                usernameLabel.getText().toString(),
+                passwordLabel.getText().toString()
+        );
     }
 
-    public void loginSucceeded() {
+    public void loginSuccess(String token) {
+        App.setToken(token);
+        Intent intent = new Intent(this, ScanActivity.class);
+        startActivity(intent);
+    }
 
+    public void loginFailure() {
+        Toast.makeText(this, "Bad login or password", Toast.LENGTH_LONG).show();
+    }
+
+    public void connectionError(int errorCode) {
+        switch (errorCode){
+            case App.PARSE_ERROR:
+                Toast.makeText(this, "Parse error", Toast.LENGTH_LONG).show();
+                break;
+            case App.CONNECTION_ERROR:
+                Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
+                break;
+            case App.UNAUTHENTICATED:
+                Toast.makeText(this, "Only officers can login", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
 }

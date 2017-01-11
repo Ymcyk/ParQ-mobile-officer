@@ -8,11 +8,11 @@ import com.parq.parqofficer.R;
  * Created by piotr on 27.12.16.
  */
 
-public class ParQURLs {
+public class ParQURLConstructor {
     private String authority;
     private Context context;
 
-    public ParQURLs(String authority, Context context) {
+    public ParQURLConstructor(String authority, Context context) {
         this.authority = authority;
         this.context = context;
     }
