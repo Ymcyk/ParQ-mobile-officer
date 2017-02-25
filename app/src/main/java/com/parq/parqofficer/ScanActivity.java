@@ -42,13 +42,18 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     public void onValidTicket(Ticket ticket){
-        validityLabel.setText("Ticket is valid");
+        validityLabel.setText("Bilet jest ważny");
         plateLabel.setText(String.format("%s-%s", ticket.getPlateCountry(), ticket.getPlateNumber()));
         parkingLabel.setText(ticket.getParking());
     }
 
     public void onInvalidTicket() {
-        validityLabel.setText("Ticket is invalid");
+        validityLabel.setText("Brak biletu");
+    }
+
+    public void badBadgeId() {
+        validityLabel.setText("Brak biletu");
+        Toast.makeText(this, "Nieodpowiedni kod QR", Toast.LENGTH_LONG).show();
     }
 
     private void cleanLabels() {
@@ -63,7 +68,7 @@ public class ScanActivity extends AppCompatActivity {
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null && result.getContents() != null){
-            Toast.makeText(this, result.getContents(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, result.getContents(), Toast.LENGTH_LONG).show();
             sendRequest(result.getContents());
         }
     }
@@ -76,13 +81,13 @@ public class ScanActivity extends AppCompatActivity {
     public void connectionError(int errorCode) {
         switch (errorCode){
             case App.PARSE_ERROR:
-                validityLabel.setText("Parse error");
+                Toast.makeText(this, "Błąd podczas parsowania", Toast.LENGTH_LONG).show();
                 break;
             case App.CONNECTION_ERROR:
-                validityLabel.setText("Connection error");
+                Toast.makeText(this, "Błąd połączenia", Toast.LENGTH_LONG).show();
                 break;
             case App.UNAUTHENTICATED:
-                validityLabel.setText("Unauthenticated");
+                Toast.makeText(this, "Brak uprawnień", Toast.LENGTH_LONG).show();
                 break;
         }
     }

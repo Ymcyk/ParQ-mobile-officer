@@ -38,6 +38,7 @@ public class ScanActivityAPI {
                         try {
                             JSONArray arrayResponse = new JSONArray(response);
                             if(arrayResponse.length() == 0){
+                                // brak biletu
                                 scanActivity.onInvalidTicket();
                                 return;
                             }
@@ -54,6 +55,7 @@ public class ScanActivityAPI {
                             String parkingName = parkingResponse.getString("name");
 
                             Ticket ticket = new Ticket(plateCountry, plateNumber, parkingName);
+                            // ważny bilet
                             scanActivity.onValidTicket(ticket);
 
                         } catch (JSONException e) {
@@ -66,10 +68,11 @@ public class ScanActivityAPI {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if(error.networkResponse != null && error.networkResponse.statusCode == 406){
-                            scanActivity.onInvalidTicket();
+                            scanActivity.badBadgeId();
                             return;
+                        } else {
+                            scanActivity.connectionError(App.CONNECTION_ERROR);
                         }
-                        scanActivity.connectionError(App.CONNECTION_ERROR);
                         error.printStackTrace();
                     }
                 }

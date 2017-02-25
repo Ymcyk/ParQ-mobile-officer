@@ -20,7 +20,8 @@ public class ParQURLConstructor {
     private Builder getBase() {
         return new Builder()
                 .scheme("http")
-                .encodedAuthority(authority);
+                .encodedAuthority(authority)
+                .appendEncodedPath("api/");
     }
 
     public String getLoginURL() {

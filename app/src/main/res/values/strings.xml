@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">ParQ Officer</string>
     <!-- LoginActivity -->
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="login">Login</string>
+    <string name="username">Nazwa użytkownika</string>
+    <string name="password">Hasło</string>
+    <string name="login">Zaloguj</string>
     <string name="url">URL</string>
     <!-- LoginActivityAPU -->
     <string name="bad_login_or_pass">Bad login or password</string>
@@ -12,14 +12,14 @@
     <string name="sharedpref_file_key">org.parq.parqofficer.sharedpref</string>
     <string name="sharedpref_url_slug">url</string>
     <!-- fragment_type_url -->
-    <string name="type_url">Type URL</string>
+    <string name="type_url">Podaj adres serwera</string>
     <string name="ok">OK</string>
     <!-- ActivityScan -->
-    <string name="start_scan">Start scanning</string>
-    <string name="plate_number">Plate number</string>
+    <string name="start_scan">Skanuj</string>
+    <string name="plate_number">Numer rejestracji</string>
     <string name="parking">Parking</string>
     <!-- ParQ API URL -->
-    <string name="url_login">api-token-auth/</string>
+    <string name="url_login">login/</string>
     <string name="url_current">current/</string>
     <string name="url_tickets">tickets/</string>
 </resources>
